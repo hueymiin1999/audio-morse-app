@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
   static Route<dynamic> route() =>
@@ -11,7 +12,29 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   double _currentSpeedValue = 20;
-  double _currentToneValue = 20;
+  double _currentToneValue = 100;
+
+  /* Future<void> savePreferences() async {
+    final SharedPreferences prefs = await _prefs;
+  }*/
+  Future<void> getSettingsVariable() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.containsKey("frequency")
+        ? _currentToneValue = prefs.getInt("frequency")!.toDouble()
+        : _currentToneValue = 100;
+
+    prefs.containsKey("speed")
+        ? _currentSpeedValue = prefs.getInt("speed")!.toDouble()
+        : _currentSpeedValue = 20;
+
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getSettingsVariable();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,45 +55,89 @@ class _SettingsPageState extends State<SettingsPage> {
           Container(
             margin: const EdgeInsets.all(20.0),
             child: Text(
-              "SPEED = " + _currentSpeedValue.toStringAsFixed(2) + "WPM",
+              "SPEED = " + _currentSpeedValue.toStringAsFixed(0) + "WPM",
               style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
           ),
           Slider(
             value: _currentSpeedValue,
             max: 50,
-            min: 5,
-            label: _currentSpeedValue.round().toString(),
+            min: 0,
+            divisions: 50,
             activeColor: Colors.amber,
             inactiveColor: Colors.grey,
             onChanged: (double value) {
               setState(() {
+                if (value == 0) {
+                  value = 1;
+                }
                 _currentSpeedValue = value;
+                //print(_currentSpeedValue.toInt());
               });
             },
           ),
           Container(
             margin: const EdgeInsets.all(20.0),
             child: Text(
-              "TONE = " + _currentToneValue.toStringAsFixed(2) + "Hz",
+              "FREQUENCY = " + _currentToneValue.toStringAsFixed(0) + "Hz",
               style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
           ),
           Slider(
             value: _currentToneValue,
             max: 1000,
-            min: 20,
-            label: _currentToneValue.round().toString(),
+            min: 100,
+            divisions: 900,
             activeColor: Colors.amber,
             inactiveColor: Colors.grey,
             onChanged: (double value) {
               setState(() {
                 _currentToneValue = value;
+                //print(_currentToneValue.toInt());
               });
             },
           ),
           ElevatedButton(
-              onPressed: (() {}),
+              onPressed: (() async {
+                AlertDialog alert;
+                try {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.setInt('frequency', _currentToneValue.toInt());
+                  prefs.setInt('speed', _currentSpeedValue.toInt());
+
+                  alert = AlertDialog(
+                    title: const Text("Success!"),
+                    content: const Text("Settings is updated."),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Okay")),
+                    ],
+                  );
+                } catch (e) {
+                  alert = AlertDialog(
+                    title: const Text("Error!"),
+                    content: const Text(
+                        "Unable to update Settings, please try again."),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Okay")),
+                    ],
+                  );
+                }
+                setState(() {});
+                showDialog(
+                    context: context,
+                    builder: (BuildContext cotext) {
+                      return alert;
+                    });
+              }),
               style: ElevatedButton.styleFrom(
                   primary: Colors.amber,
                   fixedSize: const Size(250, 50),
