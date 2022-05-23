@@ -18,8 +18,19 @@ class EncodeViewModel extends Viewmodel {
   Future<Encode> getEncodedMes(String textMes) async {
     //turnBusy();
     Encode e1 = await dataService.sendTextMessage(textMes);
-    // print(e1.encodedMessage);
+    String? changedMes = e1.encodedMessage;
+    changedMes = changedMes!.replaceAll("/", " ");
+    changedMes = changedMes.replaceAll(";", "   ");
+    print("changed message = " + changedMes);
+    e1.encodedMessage = changedMes;
+
     return e1;
     //turnIdle();
+  }
+
+  Future<String?> changeFormat(String rawMes) async {
+    String? changedMes = "a" + " a" + "   a" + "    a";
+    print(changedMes);
+    return changedMes;
   }
 }
