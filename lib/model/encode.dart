@@ -1,6 +1,7 @@
 class Encode {
   String? encodedMessage;
   String? textMessage;
+  String? changedMessage;
 
   Encode({this.textMessage, this.encodedMessage});
 

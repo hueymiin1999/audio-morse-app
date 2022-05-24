@@ -26,10 +26,10 @@ class RestService {
     final response = await http.get(Uri.parse('$baseUrl/$endpoint'));
 
     if (response.statusCode == 200) {
-      print(response.body);
+      //print(response.body);
       return jsonDecode(response.body);
     }
-    print(response.body);
+    //print(response.body);
     throw response;
   }
 
@@ -39,6 +39,16 @@ class RestService {
 
     if (response.statusCode == 201) {
       return jsonDecode(response.body);
+    }
+    throw response;
+  }
+
+  Future postFile(String endpoint, {dynamic data}) async {
+    final response = await http.post(Uri.parse('$baseUrl/$endpoint'),
+        headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return response;
     }
     throw response;
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:morse_code_app/encode/encode_viewmodel.dart';
+import 'package:just_audio/just_audio.dart';
 
+import '../model/audio_morse.dart';
 import '../model/encode.dart';
 
 class EncodePage extends StatefulWidget {
@@ -16,11 +18,20 @@ class _EncodePageState extends State<EncodePage> {
   final EncodeViewModel viewModel = EncodeViewModel();
   final textController = TextEditingController();
   Encode? encode;
+  AudioMorse? audioMorse;
+  late AudioPlayer player;
+
+  @override
+  void initState() {
+    super.initState();
+    player = AudioPlayer();
+  }
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     textController.dispose();
+    player.dispose();
     super.dispose();
   }
 
@@ -103,7 +114,38 @@ class _EncodePageState extends State<EncodePage> {
                         ),
                       ),
                       IconButton(
-                          onPressed: (() {}),
+                          onPressed: (() async {
+                            String morse;
+                            if (encode?.encodedMessage != null ||
+                                encode?.encodedMessage == "") {
+                              morse = encode!.encodedMessage.toString();
+
+                              audioMorse =
+                                  await viewModel.playMorseSound(morse);
+                              await player
+                                  .setFilePath(audioMorse!.path.toString());
+                              player.play();
+                            } else {
+                              AlertDialog alert = AlertDialog(
+                                title: const Text("Error!"),
+                                content: const Text(
+                                    "Plaese make sure you have encode the text."),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("Okay")),
+                                ],
+                              );
+
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext cotext) {
+                                    return alert;
+                                  });
+                            }
+                          }),
                           icon: const Icon(
                             Icons.surround_sound,
                             size: 30,
@@ -116,7 +158,7 @@ class _EncodePageState extends State<EncodePage> {
                       height: maxline * 30,
                       child: (encode != null)
                           ? Text(
-                              encode!.encodedMessage.toString(),
+                              encode!.changedMessage.toString(),
                               style: const TextStyle(fontSize: 30),
                             )
                           : const Text(

@@ -17,6 +17,16 @@ class EncodeDataService {
 
     return Encode.fromJson(json);
   }
+
+  Future playMorseSound(
+      {required String morse, required int freq, required int speed}) async {
+    final response = await rest.postFile('/play_morse_audio', data: {
+      "morse": morse,
+      "freq": freq,
+      "speed": speed,
+    });
+    return response;
+  }
   // Future<List<Bank>> getBankList() async {
   //   final listJson = await rest.get('bank');
 
