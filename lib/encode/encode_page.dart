@@ -1,6 +1,8 @@
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:morse_code_app/encode/encode_viewmodel.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../model/audio_morse.dart';
 import '../model/encode.dart';
@@ -21,10 +23,14 @@ class _EncodePageState extends State<EncodePage> {
   AudioMorse? audioMorse;
   late AudioPlayer player;
 
+  late stt.SpeechToText _speech;
+  bool isListening = false;
+
   @override
   void initState() {
     super.initState();
     player = AudioPlayer();
+    _speech = stt.SpeechToText();
   }
 
   @override
@@ -77,18 +83,40 @@ class _EncodePageState extends State<EncodePage> {
                       maxLines: maxline,
                       style: const TextStyle(fontSize: 22),
                       decoration: InputDecoration(
-                          hintStyle: const TextStyle(fontSize: 22),
-                          hintText: "Please enter your text",
-                          enabledBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white)),
-                          focusedBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey)),
-                          suffixIcon: IconButton(
-                              onPressed: (() {}),
-                              icon: const Icon(
-                                Icons.mic,
-                                color: Colors.grey,
-                              ))),
+                        hintStyle: const TextStyle(fontSize: 22),
+                        hintText: "Please enter your text",
+                        enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white)),
+                        focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey)),
+                        suffixIcon: GestureDetector(
+                          child: AvatarGlow(
+                            endRadius: 30.0,
+                            animate: isListening,
+                            glowColor: Colors.redAccent,
+                            duration: const Duration(milliseconds: 2000),
+                            repeatPauseDuration:
+                                const Duration(milliseconds: 100),
+                            repeat: true,
+                            child: Icon(
+                                isListening ? Icons.mic : Icons.mic_none,
+                                color: isListening ? Colors.red : Colors.grey),
+                          ),
+                          onLongPress: () {
+                            setState(() {
+                              listen();
+                            });
+                            //print("start");
+                          },
+                          onLongPressUp: () {
+                            //print("end");
+                            setState(() {
+                              isListening = false;
+                            });
+                            _speech.stop();
+                          },
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -191,5 +219,21 @@ class _EncodePageState extends State<EncodePage> {
         ),
       ),
     );
+  }
+
+  void listen() async {
+    if (!isListening) {
+      bool avail = await _speech.initialize();
+      if (avail) {
+        setState(() {
+          isListening = true;
+        });
+        _speech.listen(onResult: (value) {
+          setState(() {
+            textController.text = value.recognizedWords;
+          });
+        });
+      }
+    }
   }
 }
