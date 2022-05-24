@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:morse_code_app/decode/decode_viewmodel.dart';
 import 'package:morse_code_app/model/decode.dart';
@@ -130,7 +131,17 @@ class _DecodePageState extends State<DecodePage> {
               ),
             ),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () async {
+                final result = await FilePicker.platform
+                    .pickFiles(allowMultiple: false, type: FileType.audio);
+                if (result == null) return;
+
+                // Open single file
+                final file = result.files.first;
+                setState(() {
+                  morseTextController.text = file.name;
+                });
+              },
               icon: const Icon(Icons.upload),
               label: const Text(
                 "Upload Audio Files",
