@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:morse_code_app/decode/decode_viewmodel.dart';
@@ -137,10 +139,12 @@ class _DecodePageState extends State<DecodePage> {
                 if (result == null) return;
 
                 // Open single file
-                final file = result.files.first;
+                final audio = result.files.first;
                 setState(() {
-                  morseTextController.text = file.name;
+                  morseTextController.text = audio.name;
                 });
+                print("1path = ${audio.path}");
+                await viewmodel.decodeAudio(audio.path.toString());
               },
               icon: const Icon(Icons.upload),
               label: const Text(

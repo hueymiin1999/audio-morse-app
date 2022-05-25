@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 
 // RestService is a wrapper class implmenting for REST API calls.
@@ -51,6 +52,25 @@ class RestService {
       return response;
     }
     throw response;
+  }
+
+  Future postAudio(String endpoint, path) async {
+    print("2path = $path");
+    var request =
+        http.MultipartRequest("POST", Uri.parse('$baseUrl/$endpoint'));
+
+    var audio = http.MultipartFile.fromBytes(
+        'audio', (await File(path).readAsBytes()),
+        filename: "sound.wav");
+
+    request.files.add(audio);
+
+    request.send().then((response) {
+      if (response.statusCode == 200)
+        print("Uploaded!");
+      else
+        print("Error! Status code = ${response.statusCode}");
+    });
   }
 
   Future patch(String endpoint, {dynamic data}) async {

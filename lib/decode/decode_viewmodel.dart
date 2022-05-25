@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:morse_code_app/app/dependencies.dart';
 import 'package:morse_code_app/model/decode.dart';
 import 'package:morse_code_app/services/decode_data_service.dart';
@@ -18,5 +20,9 @@ class DecodeViewmodel extends Viewmodel {
     Decode d1 = await dataService.sendMorseMessage(processedMes);
     d1.morseMessage = morseMes;
     return d1;
+  }
+
+  Future<void> decodeAudio(String path) async {
+    await dataService.decodeAudioMorse(path);
   }
 }
