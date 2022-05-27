@@ -22,7 +22,9 @@ class DecodeViewmodel extends Viewmodel {
     return d1;
   }
 
-  Future<void> decodeAudio(String path) async {
-    await dataService.decodeAudioMorse(path);
+  Future<Decode> decodeAudio(String path, String filename) async {
+    Decode d2 = await dataService.decodeAudioMorse(path, filename);
+    d2.getMorseMes();
+    return d2;
   }
 }

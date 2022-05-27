@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:morse_code_app/model/decode.dart';
 
 import 'rest_service.dart';
@@ -20,7 +18,8 @@ class DecodeDataService {
     return Decode.fromJson(json);
   }
 
-  Future<void> decodeAudioMorse(String path) async {
-    await rest.postAudio('/read_audio', path);
+  Future<Decode> decodeAudioMorse(String path, String filename) async {
+    final json = await rest.postAudio('/decode_audio', path, filename);
+    return Decode.fromJson(json);
   }
 }

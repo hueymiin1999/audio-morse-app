@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 
 // RestService is a wrapper class implmenting for REST API calls.
@@ -54,23 +53,37 @@ class RestService {
     throw response;
   }
 
-  Future postAudio(String endpoint, path) async {
-    print("2path = $path");
+  Future postAudio(String endpoint, path, filename) async {
+    //print("2path = $path");
     var request =
         http.MultipartRequest("POST", Uri.parse('$baseUrl/$endpoint'));
 
-    var audio = http.MultipartFile.fromBytes(
-        'audio', (await File(path).readAsBytes()),
-        filename: "sound.wav");
+    var audio =
+        await http.MultipartFile.fromPath('audio', path, filename: filename);
 
     request.files.add(audio);
 
-    request.send().then((response) {
-      if (response.statusCode == 200)
-        print("Uploaded!");
-      else
-        print("Error! Status code = ${response.statusCode}");
+    var streamedRes = await request.send();
+
+    if (streamedRes.statusCode == 200 || streamedRes.statusCode == 201) {
+      var response = await http.Response.fromStream(streamedRes);
+      return jsonDecode(response.body);
+    } else {
+      //print("Error! Status code = ${response.statusCode}");
+      return "error";
+    }
+
+    /*request.send().then((response) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        //print("Uploaded!");
+        print(response);
+        return response;
+      } else {
+        //print("Error! Status code = ${response.statusCode}");
+        return "error";
+      }
     });
+    */
   }
 
   Future patch(String endpoint, {dynamic data}) async {

@@ -14,4 +14,9 @@ class Decode {
         'processedMes': processedMorse,
         'decodedMes': decodedMessage,
       };
+
+  void getMorseMes() {
+    String morse = processedMorse!.replaceAll('/', ' ');
+    processedMorse = morse.replaceAll(';', '   ');
+  }
 }
