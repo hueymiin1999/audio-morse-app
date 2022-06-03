@@ -22,4 +22,14 @@ class DecodeDataService {
     final json = await rest.postAudio('/decode_audio', path, filename);
     return Decode.fromJson(json);
   }
+
+  Future playMorseSound(
+      {required String morse, required int freq, required int speed}) async {
+    final response = await rest.postFile('/play_morse_audio', data: {
+      "morse": morse,
+      "freq": freq,
+      "speed": speed,
+    });
+    return response;
+  }
 }

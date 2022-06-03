@@ -2,6 +2,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:morse_code_app/decode/decode_viewmodel.dart';
 import 'package:morse_code_app/model/decode.dart';
+import 'package:just_audio/just_audio.dart';
+
+import '../model/audio_morse.dart';
 
 class DecodePage extends StatefulWidget {
   static Route<dynamic> route() =>
@@ -16,6 +19,21 @@ class _DecodePageState extends State<DecodePage> {
   final DecodeViewmodel viewmodel = DecodeViewmodel();
   final morseTextController = TextEditingController();
   Decode? decode;
+  AudioMorse? audioMorse;
+
+  late AudioPlayer player;
+
+  @override
+  void initState() {
+    super.initState();
+    player = AudioPlayer();
+  }
+
+  @override
+  void dispose() {
+    player.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +64,55 @@ class _DecodePageState extends State<DecodePage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(5.0),
-                    child: Text(
-                      "MORSE CODE",
-                      style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                    ),
+                  Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Text(
+                          "MORSE CODE",
+                          style: TextStyle(
+                              fontSize: 25, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      IconButton(
+                          onPressed: (() async {
+                            String morse;
+                            if (decode?.morseMessage != null ||
+                                decode?.morseMessage == "") {
+                              morse = decode!.processedMorse.toString();
+
+                              audioMorse =
+                                  await viewmodel.playMorseSound(morse);
+                              await player
+                                  .setFilePath(audioMorse!.path.toString());
+                              player.play();
+                            } else {
+                              AlertDialog alert = AlertDialog(
+                                title: const Text("Error!"),
+                                content: const Text(
+                                    "Plaese make sure you have encode the text."),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("Okay")),
+                                ],
+                              );
+
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext cotext) {
+                                    return alert;
+                                  });
+                            }
+                          }),
+                          icon: const Icon(
+                            Icons.surround_sound,
+                            size: 30,
+                            color: Colors.grey,
+                          ))
+                    ],
                   ),
                   Container(
                     margin: const EdgeInsets.all(5.0),
@@ -159,16 +219,6 @@ class _DecodePageState extends State<DecodePage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(35.0))),
             ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: FloatingActionButton.extended(
-                  label: const Icon(
-                    Icons.mic,
-                    size: 40,
-                  ),
-                  backgroundColor: Colors.amber,
-                  onPressed: () {}),
-            )
           ],
         ),
       ),

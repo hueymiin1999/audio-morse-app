@@ -14,39 +14,37 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.amber,
-      body: Column(
-        children: [
-          SizedBox(
-              height: MediaQuery.of(context).size.height / 4,
-              child: const Center(
-                  child: Text(
-                'Audio Morse Code',
-                style: TextStyle(
-                  fontFamily: 'CarterOne',
-                  fontSize: 40,
-                ),
-              ))),
-          Container(
-            margin: const EdgeInsets.all(10),
-            height: MediaQuery.of(context).size.height * 3 / 4 - 20,
-            child: Column(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+                height: MediaQuery.of(context).size.height / 4,
+                child: const Center(
+                    child: Text(
+                  'Audio Morse Code',
+                  style: TextStyle(
+                    fontFamily: 'CarterOne',
+                    fontSize: 40,
+                  ),
+                ))),
+            Column(
               children: [
                 // Row 1
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      height: 90,
-                      width: 90,
-                      margin: const EdgeInsets.all(10.0),
+                      height: MediaQuery.of(context).size.height * 1 / 7,
+                      width: MediaQuery.of(context).size.width * 2 / 7,
+                      //margin: const EdgeInsets.all(10.0),
                       child: const Icon(
                         Icons.mail,
                         size: 80,
                       ),
                     ),
                     Container(
-                      height: 90,
-                      width: 230,
+                      height: MediaQuery.of(context).size.height * 1 / 10,
+                      width: MediaQuery.of(context).size.width * 3 / 5,
                       margin: const EdgeInsets.all(10.0),
                       child: ElevatedButton(
                         onPressed: () {
@@ -74,8 +72,8 @@ class _MainPageState extends State<MainPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      height: 90,
-                      width: 90,
+                      height: MediaQuery.of(context).size.height * 1 / 7,
+                      width: MediaQuery.of(context).size.width * 2 / 7,
                       margin: const EdgeInsets.all(10.0),
                       child: const Icon(
                         Icons.how_to_vote,
@@ -83,8 +81,8 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ),
                     Container(
-                      height: 90,
-                      width: 230,
+                      height: MediaQuery.of(context).size.height * 1 / 10,
+                      width: MediaQuery.of(context).size.width * 3 / 5,
                       margin: const EdgeInsets.all(10.0),
                       child: ElevatedButton(
                         onPressed: () {
@@ -112,8 +110,8 @@ class _MainPageState extends State<MainPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      height: 90,
-                      width: 90,
+                      height: MediaQuery.of(context).size.height * 1 / 7,
+                      width: MediaQuery.of(context).size.width * 2 / 7,
                       margin: const EdgeInsets.all(10.0),
                       child: const Icon(
                         Icons.auto_stories,
@@ -121,8 +119,8 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ),
                     Container(
-                      height: 90,
-                      width: 230,
+                      height: MediaQuery.of(context).size.height * 1 / 10,
+                      width: MediaQuery.of(context).size.width * 3 / 5,
                       margin: const EdgeInsets.all(10.0),
                       child: ElevatedButton(
                         onPressed: () {
@@ -150,8 +148,8 @@ class _MainPageState extends State<MainPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      height: 90,
-                      width: 90,
+                      height: MediaQuery.of(context).size.height * 1 / 7,
+                      width: MediaQuery.of(context).size.width * 2 / 7,
                       margin: const EdgeInsets.all(10.0),
                       child: const Icon(
                         Icons.settings,
@@ -159,8 +157,8 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ),
                     Container(
-                      height: 90,
-                      width: 230,
+                      height: MediaQuery.of(context).size.height * 1 / 10,
+                      width: MediaQuery.of(context).size.width * 3 / 5,
                       margin: const EdgeInsets.all(10.0),
                       child: ElevatedButton(
                         onPressed: () {
@@ -185,8 +183,8 @@ class _MainPageState extends State<MainPage> {
                 ),
               ],
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
