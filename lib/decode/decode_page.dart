@@ -20,18 +20,24 @@ class _DecodePageState extends State<DecodePage> {
   final morseTextController = TextEditingController();
   Decode? decode;
   AudioMorse? audioMorse;
+  bool haveAudio = false;
+  String? fileTitle;
+  String? path;
 
   late AudioPlayer player;
+  late AudioPlayer player2;
 
   @override
   void initState() {
     super.initState();
     player = AudioPlayer();
+    player2 = AudioPlayer();
   }
 
   @override
   void dispose() {
     player.dispose();
+    player2.dispose();
     super.dispose();
   }
 
@@ -79,7 +85,8 @@ class _DecodePageState extends State<DecodePage> {
                             String morse;
                             if (decode?.morseMessage != null ||
                                 decode?.morseMessage == "") {
-                              morse = decode!.processedMorse.toString();
+                              morse = decode!.morseMessage.toString();
+                              print(morse);
 
                               audioMorse =
                                   await viewmodel.playMorseSound(morse);
@@ -192,11 +199,27 @@ class _DecodePageState extends State<DecodePage> {
                 ],
               ),
             ),
+            if (haveAudio) ...[
+              Text(fileTitle.toString()),
+              IconButton(
+                  onPressed: () async {
+                    if (path != null || path != "") {
+                      await player2.setUrl(path.toString());
+                      player2.play();
+                    }
+                  },
+                  icon: const Icon(Icons.play_arrow))
+            ],
             ElevatedButton.icon(
               onPressed: () async {
                 final result = await FilePicker.platform
                     .pickFiles(allowMultiple: false, type: FileType.audio);
-                if (result == null) return;
+                if (result == null) {
+                  setState(() {
+                    haveAudio = false;
+                  });
+                  return;
+                }
 
                 // Open single file
                 final audio = result.files.first;
@@ -206,6 +229,9 @@ class _DecodePageState extends State<DecodePage> {
                   if (decode != null) {
                     morseTextController.text = decode!.processedMorse!;
                   }
+                  haveAudio = true;
+                  fileTitle = audio.name;
+                  path = audio.path;
                 });
               },
               icon: const Icon(Icons.upload),

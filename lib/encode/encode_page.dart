@@ -26,6 +26,10 @@ class _EncodePageState extends State<EncodePage> {
   late stt.SpeechToText _speech;
   bool isListening = false;
 
+  static const int wordLimit = 30;
+  int count = 0;
+  bool validate = false;
+
   @override
   void initState() {
     super.initState();
@@ -81,10 +85,13 @@ class _EncodePageState extends State<EncodePage> {
                     child: TextField(
                       controller: textController,
                       maxLines: maxline,
+                      //inputFormatters: [],
+                      onChanged: (_) => setState(() {}),
                       style: const TextStyle(fontSize: 22),
                       decoration: InputDecoration(
                         hintStyle: const TextStyle(fontSize: 22),
                         hintText: "Please enter your text",
+                        errorText: _errorText,
                         enabledBorder: const UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.white)),
                         focusedBorder: const UnderlineInputBorder(
@@ -198,11 +205,14 @@ class _EncodePageState extends State<EncodePage> {
               ),
             ),
             ElevatedButton(
-                onPressed: (() async {
-                  encode = await viewModel.getEncodedMes(textController.text);
-                  //print(encode!.encodedMessage);
-                  setState(() {});
-                }),
+                onPressed: !validate
+                    ? (() async {
+                        encode =
+                            await viewModel.getEncodedMes(textController.text);
+                        //print(encode!.encodedMessage);
+                        setState(() {});
+                      })
+                    : null,
                 style: ElevatedButton.styleFrom(
                     primary: Colors.amber,
                     fixedSize: const Size(250, 50),
@@ -235,5 +245,19 @@ class _EncodePageState extends State<EncodePage> {
         });
       }
     }
+  }
+
+  String? get _errorText {
+    // at any time, we can get the text from _controller.value.text
+    final text = textController.value.text;
+    // Note: you can do your own custom validation here
+    // Move this logic this outside the widget for more testable code
+    if (text.split(' ').length > wordLimit) {
+      validate = true;
+      return 'You have exceed $wordLimit words';
+    }
+    // return null if the text is valid
+    validate = false;
+    return null;
   }
 }

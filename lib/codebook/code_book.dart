@@ -33,21 +33,25 @@ class _CodeBookPageState extends State<CodeBookPage> {
             morseCodeDic.forEach((key, value) {
               list.add(Morsecode(alphabet: key, morseCode: value));
             });
-            return ListTile(
-                trailing: Text(
-                  list[index].morseCode.toString(),
-                  style: const TextStyle(
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold),
-                ),
-                title: Text(
-                  list[index].alphabet.toString().toUpperCase(),
-                  style: const TextStyle(
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold),
-                ));
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 5.0, horizontal: 50.0),
+              child: ListTile(
+                  trailing: Text(
+                    list[index].morseCode.toString(),
+                    style: const TextStyle(
+                        color: Color.fromARGB(255, 0, 0, 0),
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  title: Text(
+                    list[index].alphabet.toString().toUpperCase(),
+                    style: const TextStyle(
+                        color: Color.fromARGB(255, 0, 0, 0),
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold),
+                  )),
+            );
           }),
     );
   }
