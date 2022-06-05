@@ -24,13 +24,16 @@ class RestService {
 
   Future get(String endpoint) async {
     final response = await http.get(Uri.parse('$baseUrl/$endpoint'));
+    return response;
 
-    if (response.statusCode == 200) {
-      //print(response.body);
-      return jsonDecode(response.body);
-    }
+    // if (response.statusCode == 200) {
+    //   //print(response.body);
+    //   return jsonDecode(response.body);
+    // } else {
+    //   haveError = true;
+    // }
     //print(response.body);
-    throw response;
+    //throw response;
   }
 
   Future post(String endpoint, {dynamic data}) async {
@@ -47,10 +50,10 @@ class RestService {
     final response = await http.post(Uri.parse('$baseUrl/$endpoint'),
         headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return response;
-    }
-    throw response;
+    //if (response.statusCode == 200 || response.statusCode == 201) {
+    return response;
+    //}
+    //throw response;
   }
 
   Future postAudio(String endpoint, path, filename) async {
@@ -68,22 +71,8 @@ class RestService {
     if (streamedRes.statusCode == 200 || streamedRes.statusCode == 201) {
       var response = await http.Response.fromStream(streamedRes);
       return jsonDecode(response.body);
-    } else {
-      //print("Error! Status code = ${response.statusCode}");
-      return "error";
     }
-
-    /*request.send().then((response) {
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        //print("Uploaded!");
-        print(response);
-        return response;
-      } else {
-        //print("Error! Status code = ${response.statusCode}");
-        return "error";
-      }
-    });
-    */
+    throw streamedRes;
   }
 
   Future patch(String endpoint, {dynamic data}) async {

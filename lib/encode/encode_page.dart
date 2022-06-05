@@ -2,6 +2,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:morse_code_app/encode/encode_viewmodel.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:morse_code_app/services/rest_service.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../model/audio_morse.dart';
@@ -150,6 +151,7 @@ class _EncodePageState extends State<EncodePage> {
                       ),
                       IconButton(
                           onPressed: (() async {
+                            AlertDialog alert = const AlertDialog();
                             String morse;
                             if (encode?.encodedMessage != null ||
                                 encode?.encodedMessage == "") {
@@ -157,11 +159,42 @@ class _EncodePageState extends State<EncodePage> {
 
                               audioMorse =
                                   await viewModel.playMorseSound(morse);
-                              await player
-                                  .setFilePath(audioMorse!.path.toString());
-                              player.play();
+
+                              if (EncodeViewModel.encodeError) {
+                                alert = AlertDialog(
+                                  title: const Text("Error!"),
+                                  content: const Text(
+                                      "Unable to play sound, please try again."),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text("Okay")),
+                                  ],
+                                );
+                              } else {
+                                try {
+                                  await player
+                                      .setFilePath(audioMorse!.path.toString());
+                                  player.play();
+                                } catch (e) {
+                                  alert = AlertDialog(
+                                    title: const Text("Error!"),
+                                    content: const Text(
+                                        "Unable to play sound, please try again."),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text("Okay")),
+                                    ],
+                                  );
+                                }
+                              }
                             } else {
-                              AlertDialog alert = AlertDialog(
+                              alert = AlertDialog(
                                 title: const Text("Error!"),
                                 content: const Text(
                                     "Plaese make sure you have encode the text."),
@@ -209,7 +242,26 @@ class _EncodePageState extends State<EncodePage> {
                     ? (() async {
                         encode =
                             await viewModel.getEncodedMes(textController.text);
-                        //print(encode!.encodedMessage);
+                        print(EncodeViewModel.encodeError.toString());
+                        if (EncodeViewModel.encodeError) {
+                          AlertDialog alert = AlertDialog(
+                            title: const Text("Error!"),
+                            content: const Text(
+                                "Something error with text, please try again."),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text("Okay")),
+                            ],
+                          );
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext cotext) {
+                                return alert;
+                              });
+                        }
                         setState(() {});
                       })
                     : null,

@@ -11,6 +11,7 @@ import '../app/dependencies.dart';
 
 class EncodeViewModel extends Viewmodel {
   Encode? encode;
+  static bool encodeError = false;
 
   EncodeDataService get dataService => service();
 
@@ -20,20 +21,24 @@ class EncodeViewModel extends Viewmodel {
 
   Encode? get encode1 => encode;
 
-  Future<Encode> getEncodedMes(String textMes) async {
+  Future<Encode?> getEncodedMes(String textMes) async {
+    encodeError = false;
     //turnBusy();
-    Encode e1 = await dataService.sendTextMessage(textMes);
-    String? changedMes = e1.encodedMessage;
-    changedMes = changedMes!.replaceAll("/", " ");
-    changedMes = changedMes.replaceAll(";", "   ");
-    //print("changed message = " + changedMes);
-    e1.changedMessage = changedMes;
+    Encode? e1 = await dataService.sendTextMessage(textMes);
+    if (e1 != null) {
+      String? changedMes = e1.encodedMessage;
+      changedMes = changedMes!.replaceAll("/", " ");
+      changedMes = changedMes.replaceAll(";", "   ");
+      //print("changed message = " + changedMes);
+      e1.changedMessage = changedMes;
+    }
 
     return e1;
     //turnIdle();
   }
 
-  Future<AudioMorse> playMorseSound(String m) async {
+  Future<AudioMorse?> playMorseSound(String m) async {
+    encodeError = false;
     int speed;
     int freq;
 
@@ -45,16 +50,24 @@ class EncodeViewModel extends Viewmodel {
 
     prefs.containsKey("speed") ? speed = prefs.getInt("speed")! : speed = 20;
 
-    final response = await dataService.playMorseSound(
-      morse: m,
-      freq: freq,
-      speed: speed,
-    );
+    try {
+      final response = await dataService.playMorseSound(
+        morse: m,
+        freq: freq,
+        speed: speed,
+      );
 
-    Directory tempDir = await getTemporaryDirectory();
-    String tempPath = tempDir.path;
-    File file = File('$tempPath/sound.wav');
-    await file.writeAsBytes(response.bodyBytes);
-    return AudioMorse(audioFile: file, path: file.path);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Directory tempDir = await getTemporaryDirectory();
+        String tempPath = tempDir.path;
+        File file = File('$tempPath/sound.wav');
+        await file.writeAsBytes(response.bodyBytes);
+        return AudioMorse(audioFile: file, path: file.path);
+      }
+    } catch (e) {
+      encodeError = true;
+      return null;
+    }
+    return null;
   }
 }

@@ -33,10 +33,10 @@ class _MainPageState extends State<MainPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    Container(
                       height: MediaQuery.of(context).size.height * 1 / 7,
                       width: MediaQuery.of(context).size.width * 2 / 7,
-                      //margin: const EdgeInsets.all(10.0),
+                      margin: const EdgeInsets.all(10.0),
                       child: const Icon(
                         Icons.mail,
                         size: 80,

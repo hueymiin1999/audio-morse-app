@@ -212,8 +212,11 @@ class _DecodePageState extends State<DecodePage> {
             ],
             ElevatedButton.icon(
               onPressed: () async {
-                final result = await FilePicker.platform
-                    .pickFiles(allowMultiple: false, type: FileType.audio);
+                final result = await FilePicker.platform.pickFiles(
+                  allowMultiple: false,
+                  allowedExtensions: ['wav'],
+                  type: FileType.custom,
+                );
                 if (result == null) {
                   setState(() {
                     haveAudio = false;
