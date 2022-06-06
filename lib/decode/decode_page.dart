@@ -104,6 +104,11 @@ class _DecodePageState extends State<DecodePage> {
                                         child: const Text("Okay")),
                                   ],
                                 );
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext cotext) {
+                                      return alert;
+                                    });
                               } else {
                                 try {
                                   await player
@@ -122,6 +127,11 @@ class _DecodePageState extends State<DecodePage> {
                                           child: const Text("Okay")),
                                     ],
                                   );
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext cotext) {
+                                        return alert;
+                                      });
                                 }
                               }
                             } else {
