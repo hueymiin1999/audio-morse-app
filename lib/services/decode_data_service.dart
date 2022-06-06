@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:morse_code_app/decode/decode_viewmodel.dart';
 import 'package:morse_code_app/model/decode.dart';
 
 import 'rest_service.dart';
@@ -12,15 +15,36 @@ class DecodeDataService {
   DecodeDataService._constructor();
   final rest = RestService();
 
-  Future<Decode> sendMorseMessage(String processMes) async {
-    final json = await rest.get('/decode_text/$processMes');
+  Future<Decode?> sendMorseMessage(String processMes) async {
+    try {
+      final response = await rest.post('/decode_text', data: {
+        'morse_mes': processMes,
+      });
 
-    return Decode.fromJson(json);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final json = jsonDecode(response.body);
+        return Decode.fromJson(json);
+      }
+    } catch (e) {
+      DecodeViewmodel.decodeError = true;
+      return null;
+    }
+    return null;
   }
 
-  Future<Decode> decodeAudioMorse(String path, String filename) async {
-    final json = await rest.postAudio('/decode_audio', path, filename);
-    return Decode.fromJson(json);
+  Future<Decode?> decodeAudioMorse(String path, String filename) async {
+    try {
+      final streamedRes = await rest.postAudio('/decode_audio', path, filename);
+      if (streamedRes.statusCode == 200 || streamedRes.statusCode == 201) {
+        var response = await http.Response.fromStream(streamedRes);
+        final json = jsonDecode(response.body);
+        return Decode.fromJson(json);
+      }
+    } catch (e) {
+      DecodeViewmodel.decodeError = true;
+      return null;
+    }
+    return null;
   }
 
   Future playMorseSound(

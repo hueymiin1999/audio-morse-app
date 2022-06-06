@@ -82,17 +82,48 @@ class _DecodePageState extends State<DecodePage> {
                       ),
                       IconButton(
                           onPressed: (() async {
+                            AlertDialog alert = const AlertDialog();
                             String morse;
-                            if (decode?.morseMessage != null ||
-                                decode?.morseMessage == "") {
-                              morse = decode!.morseMessage.toString();
-                              print(morse);
+                            if (decode?.processedMorse != null ||
+                                decode?.processedMorse == "") {
+                              morse = decode!.processedMorse.toString();
 
                               audioMorse =
                                   await viewmodel.playMorseSound(morse);
-                              await player
-                                  .setFilePath(audioMorse!.path.toString());
-                              player.play();
+
+                              if (DecodeViewmodel.decodeError) {
+                                alert = AlertDialog(
+                                  title: const Text("Error!"),
+                                  content: const Text(
+                                      "Unable to play sound, please try again."),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text("Okay")),
+                                  ],
+                                );
+                              } else {
+                                try {
+                                  await player
+                                      .setFilePath(audioMorse!.path.toString());
+                                  player.play();
+                                } catch (e) {
+                                  alert = AlertDialog(
+                                    title: const Text("Error!"),
+                                    content: const Text(
+                                        "Unable to play sound, please try again."),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text("Okay")),
+                                    ],
+                                  );
+                                }
+                              }
                             } else {
                               AlertDialog alert = AlertDialog(
                                 title: const Text("Error!"),
@@ -123,7 +154,7 @@ class _DecodePageState extends State<DecodePage> {
                   ),
                   Container(
                     margin: const EdgeInsets.all(5.0),
-                    height: maxline * 30,
+                    height: maxline * 35,
                     child: Form(
                         child: TextField(
                       controller: morseTextController,
@@ -140,11 +171,31 @@ class _DecodePageState extends State<DecodePage> {
                             onPressed: (() async {
                               String mMes = morseTextController.text;
                               String a =
-                                  mMes.replaceAll(RegExp(r'\s{2,}'), ';');
+                                  mMes.replaceAll(RegExp(r'\s{3,}'), ';');
                               // print(a);
-                              String b = a.replaceAll(RegExp(r'\s'), ',');
+                              String b = a.replaceAll(RegExp(r'\s'), '/');
                               // print(b);
                               decode = await viewmodel.getDecodeMes(mMes, b);
+
+                              if (DecodeViewmodel.decodeError) {
+                                AlertDialog alert = AlertDialog(
+                                  title: const Text("Error!"),
+                                  content: const Text(
+                                      "Something error with text, please try again."),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text("Okay")),
+                                  ],
+                                );
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext cotext) {
+                                      return alert;
+                                    });
+                              }
                               setState(() {});
                             }),
                             icon: const Icon(
@@ -226,15 +277,34 @@ class _DecodePageState extends State<DecodePage> {
 
                 // Open single file
                 final audio = result.files.first;
+                haveAudio = true;
+                path = audio.path;
+                fileTitle = audio.name;
+
                 decode = await viewmodel.decodeAudio(
                     audio.path.toString(), audio.name);
                 setState(() {
-                  if (decode != null) {
-                    morseTextController.text = decode!.processedMorse!;
+                  if (decode != null && !DecodeViewmodel.decodeError) {
+                    morseTextController.text = decode!.morseMessage!;
+                  } else {
+                    AlertDialog alert = AlertDialog(
+                      title: const Text("Error!"),
+                      content: const Text(
+                          "Something error in decode Audio file, please try again."),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Okay")),
+                      ],
+                    );
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext cotext) {
+                          return alert;
+                        });
                   }
-                  haveAudio = true;
-                  fileTitle = audio.name;
-                  path = audio.path;
                 });
               },
               icon: const Icon(Icons.upload),

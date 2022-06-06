@@ -3,11 +3,11 @@ class Decode {
   String? processedMorse;
   String? decodedMessage;
 
-  Decode({required this.morseMessage, required this.decodedMessage});
+  Decode({required this.processedMorse, required this.decodedMessage});
 
   Decode.fromJson(Map<String, dynamic> json)
       : this(
-            morseMessage: json['processedMes'],
+            processedMorse: json['processedMes'],
             decodedMessage: json['decodedMes']);
 
   Map<String, dynamic> toJson() => {
@@ -16,7 +16,7 @@ class Decode {
       };
 
   void getMorseMes() {
-    String morse = morseMessage!.replaceAll('/', ' ');
-    processedMorse = morse.replaceAll(';', '   ');
+    String morse = processedMorse!.replaceAll('/', ' ');
+    morseMessage = morse.replaceAll(';', '   ');
   }
 }

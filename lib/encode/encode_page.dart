@@ -242,7 +242,6 @@ class _EncodePageState extends State<EncodePage> {
                     ? (() async {
                         encode =
                             await viewModel.getEncodedMes(textController.text);
-                        print(EncodeViewModel.encodeError.toString());
                         if (EncodeViewModel.encodeError) {
                           AlertDialog alert = AlertDialog(
                             title: const Text("Error!"),

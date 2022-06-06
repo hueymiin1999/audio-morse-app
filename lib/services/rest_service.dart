@@ -40,10 +40,7 @@ class RestService {
     final response = await http.post(Uri.parse('$baseUrl/$endpoint'),
         headers: {'Content-Type': 'application/json'}, body: jsonEncode(data));
 
-    if (response.statusCode == 201) {
-      return jsonDecode(response.body);
-    }
-    throw response;
+    return response;
   }
 
   Future postFile(String endpoint, {dynamic data}) async {
@@ -67,12 +64,13 @@ class RestService {
     request.files.add(audio);
 
     var streamedRes = await request.send();
+    return streamedRes;
 
-    if (streamedRes.statusCode == 200 || streamedRes.statusCode == 201) {
-      var response = await http.Response.fromStream(streamedRes);
-      return jsonDecode(response.body);
-    }
-    throw streamedRes;
+    //if (streamedRes.statusCode == 200 || streamedRes.statusCode == 201) {
+    //var response = await http.Response.fromStream(streamedRes);
+    //return jsonDecode(response.body);
+    //}
+    //throw streamedRes;
   }
 
   Future patch(String endpoint, {dynamic data}) async {
