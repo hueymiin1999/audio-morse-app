@@ -20,7 +20,8 @@ class RestService {
 
   static const String baseUrl =
       //'https://us-central1-beautyfood-app-rest.cloudfunctions.net/api';
-      'http://192.168.1.103:105';
+      //'http://192.168.1.103:105';
+      'https://morseapi-y555u2u2bq-as.a.run.app';
 
   Future get(String endpoint) async {
     final response = await http.get(Uri.parse('$baseUrl/$endpoint'));
