@@ -2,7 +2,6 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:morse_code_app/encode/encode_viewmodel.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:morse_code_app/services/rest_service.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../model/audio_morse.dart';
@@ -34,8 +33,8 @@ class _EncodePageState extends State<EncodePage> {
   @override
   void initState() {
     super.initState();
-    player = AudioPlayer();
     _speech = stt.SpeechToText();
+    player = AudioPlayer();
   }
 
   @override
@@ -87,12 +86,12 @@ class _EncodePageState extends State<EncodePage> {
                       controller: textController,
                       maxLines: maxline,
                       //inputFormatters: [],
-                      onChanged: (_) => setState(() {}),
+                      //onChanged: (_) => setState(() {}),
                       style: const TextStyle(fontSize: 22),
                       decoration: InputDecoration(
                         hintStyle: const TextStyle(fontSize: 22),
                         hintText: "Please enter your text",
-                        errorText: _errorText,
+                        //errorText: _errorText,
                         enabledBorder: const UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.white)),
                         focusedBorder: const UnderlineInputBorder(
@@ -114,10 +113,10 @@ class _EncodePageState extends State<EncodePage> {
                             setState(() {
                               listen();
                             });
-                            //print("start");
+                            print("start");
                           },
                           onLongPressUp: () {
-                            //print("end");
+                            print("end");
                             setState(() {
                               isListening = false;
                             });
@@ -283,9 +282,11 @@ class _EncodePageState extends State<EncodePage> {
   }
 
   void listen() async {
+    print("is Listening-> $isListening");
     if (!isListening) {
       bool avail = await _speech.initialize();
       if (avail) {
+        print("inside listening");
         setState(() {
           isListening = true;
         });
@@ -300,13 +301,16 @@ class _EncodePageState extends State<EncodePage> {
 
   String? get _errorText {
     // at any time, we can get the text from _controller.value.text
-    final text = textController.value.text;
-    // Note: you can do your own custom validation here
-    // Move this logic this outside the widget for more testable code
-    if (text.split(' ').length > wordLimit) {
-      validate = true;
-      return 'You have exceed $wordLimit words';
+    if (!isListening) {
+      final text = textController.value.text;
+      // Note: you can do your own custom validation here
+      // Move this logic this outside the widget for more testable code
+      if (text.split(' ').length > wordLimit) {
+        validate = true;
+        return 'You have exceed $wordLimit words';
+      }
     }
+
     // return null if the text is valid
     validate = false;
     return null;
