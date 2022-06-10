@@ -56,6 +56,21 @@ class _DecodePageState extends State<DecodePage> {
         centerTitle: true,
         backgroundColor: Colors.amber,
         automaticallyImplyLeading: true,
+        actions: [
+          IconButton(
+              onPressed: () {
+                AlertDialog alert = openRulesDialog(context);
+                showDialog(
+                    context: context,
+                    builder: (BuildContext cotext) {
+                      return alert;
+                    });
+              },
+              icon: const Icon(
+                Icons.question_mark,
+                color: Colors.white,
+              ))
+        ],
         // leading: const Icon(Icons.arrow_back_ios_new_rounded),
       ),
       backgroundColor: const Color.fromARGB(255, 246, 255, 187),
@@ -138,7 +153,7 @@ class _DecodePageState extends State<DecodePage> {
                               AlertDialog alert = AlertDialog(
                                 title: const Text("Error!"),
                                 content: const Text(
-                                    "Plaese make sure you have encode the text."),
+                                    "Plaese make sure you have decode the text."),
                                 actions: [
                                   TextButton(
                                       onPressed: () {
@@ -171,7 +186,7 @@ class _DecodePageState extends State<DecodePage> {
                       maxLines: maxline,
                       style: const TextStyle(fontSize: 30),
                       decoration: const InputDecoration(
-                        hintText: "Please enter your text",
+                        hintText: "Please enter your text with '.' and '-'",
                         hintStyle: TextStyle(fontSize: 22),
                         enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.white)),
@@ -362,6 +377,61 @@ class _DecodePageState extends State<DecodePage> {
           ],
         ),
       ),
+    );
+  }
+
+  AlertDialog openRulesDialog(BuildContext context) {
+    return AlertDialog(
+      title: const Text(
+        "RULES OF MORSE CODE",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: SingleChildScrollView(
+        child: RichText(
+          text: const TextSpan(
+              style: TextStyle(color: Colors.black, fontSize: 18),
+              children: <InlineSpan>[
+                WidgetSpan(
+                    child: Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child:
+                      Text("1. The duration of the dash is 3 times of dot.\n"),
+                )),
+                WidgetSpan(
+                    child: Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Text(
+                      "2. Each dot of dash is followed by the blank period which equals to the dot duration.\n"),
+                )),
+                WidgetSpan(
+                    child: Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Text("3. Space between letters is 3 dots duration.\n"),
+                )),
+                WidgetSpan(
+                    child: Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Text("4. Space between words is 7 dots duration.\n"),
+                )),
+                WidgetSpan(
+                    child: Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Text(
+                      "5. The most frequently occurring letter has shorter expression than others. "),
+                )),
+                TextSpan(
+                    text: "(E has only one dot)",
+                    style: TextStyle(color: Colors.pinkAccent, fontSize: 18.0)),
+              ]),
+        ),
+      ),
+      actions: [
+        TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Done")),
+      ],
     );
   }
 }

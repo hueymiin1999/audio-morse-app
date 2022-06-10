@@ -57,6 +57,21 @@ class _EncodePageState extends State<EncodePage> {
         centerTitle: true,
         backgroundColor: Colors.amber,
         automaticallyImplyLeading: true,
+        actions: [
+          IconButton(
+              onPressed: () {
+                AlertDialog alert = openRulesDialog(context);
+                showDialog(
+                    context: context,
+                    builder: (BuildContext cotext) {
+                      return alert;
+                    });
+              },
+              icon: const Icon(
+                Icons.question_mark,
+                color: Colors.white,
+              ))
+        ],
         //leading: const Icon(Icons.arrow_back_ios_new_rounded),
       ),
       backgroundColor: const Color.fromARGB(255, 246, 255, 187),
@@ -86,12 +101,12 @@ class _EncodePageState extends State<EncodePage> {
                       controller: textController,
                       maxLines: maxline,
                       //inputFormatters: [],
-                      //onChanged: (_) => setState(() {}),
+                      onChanged: (_) => setState(() {}),
                       style: const TextStyle(fontSize: 22),
                       decoration: InputDecoration(
                         hintStyle: const TextStyle(fontSize: 22),
                         hintText: "Please enter your text",
-                        //errorText: _errorText,
+                        errorText: _errorText,
                         enabledBorder: const UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.white)),
                         focusedBorder: const UnderlineInputBorder(
@@ -113,10 +128,8 @@ class _EncodePageState extends State<EncodePage> {
                             setState(() {
                               listen();
                             });
-                            print("start");
                           },
                           onLongPressUp: () {
-                            print("end");
                             setState(() {
                               isListening = false;
                             });
@@ -281,12 +294,65 @@ class _EncodePageState extends State<EncodePage> {
     );
   }
 
+  AlertDialog openRulesDialog(BuildContext context) {
+    return AlertDialog(
+      title: const Text(
+        "RULES OF MORSE CODE",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: SingleChildScrollView(
+        child: RichText(
+          text: const TextSpan(
+              style: TextStyle(color: Colors.black, fontSize: 18),
+              children: <InlineSpan>[
+                WidgetSpan(
+                    child: Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child:
+                      Text("1. The duration of the dash is 3 times of dot.\n"),
+                )),
+                WidgetSpan(
+                    child: Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Text(
+                      "2. Each dot of dash is followed by the blank period which equals to the dot duration.\n"),
+                )),
+                WidgetSpan(
+                    child: Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Text("3. Space between letters is 3 dots duration.\n"),
+                )),
+                WidgetSpan(
+                    child: Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Text("4. Space between words is 7 dots duration.\n"),
+                )),
+                WidgetSpan(
+                    child: Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Text(
+                      "5. The most frequently occurring letter has shorter expression than others. "),
+                )),
+                TextSpan(
+                    text: "(E has only one dot)",
+                    style: TextStyle(color: Colors.pinkAccent, fontSize: 18.0)),
+              ]),
+        ),
+      ),
+      actions: [
+        TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Done")),
+      ],
+    );
+  }
+
   void listen() async {
-    print("is Listening-> $isListening");
     if (!isListening) {
       bool avail = await _speech.initialize();
       if (avail) {
-        print("inside listening");
         setState(() {
           isListening = true;
         });
