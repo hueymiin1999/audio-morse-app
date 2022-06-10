@@ -11,8 +11,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  double _currentSpeedValue = 20;
-  double _currentToneValue = 100;
+  double _currentSpeedValue = 7;
+  double _currentToneValue = 500;
 
   /* Future<void> savePreferences() async {
     final SharedPreferences prefs = await _prefs;
@@ -21,11 +21,11 @@ class _SettingsPageState extends State<SettingsPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.containsKey("frequency")
         ? _currentToneValue = prefs.getInt("frequency")!.toDouble()
-        : _currentToneValue = 100;
+        : _currentToneValue = 500;
 
     prefs.containsKey("speed")
         ? _currentSpeedValue = prefs.getInt("speed")!.toDouble()
-        : _currentSpeedValue = 20;
+        : _currentSpeedValue = 7;
 
     setState(() {});
   }

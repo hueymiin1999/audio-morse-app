@@ -50,9 +50,9 @@ class DecodeViewmodel extends Viewmodel {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.containsKey("frequency")
         ? freq = prefs.getInt("frequency")!
-        : freq = 100;
+        : freq = 500;
 
-    prefs.containsKey("speed") ? speed = prefs.getInt("speed")! : speed = 20;
+    prefs.containsKey("speed") ? speed = prefs.getInt("speed")! : speed = 7;
 
     try {
       final response = await dataService.playMorseSound(
