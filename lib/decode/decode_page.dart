@@ -170,49 +170,13 @@ class _DecodePageState extends State<DecodePage> {
                       controller: morseTextController,
                       maxLines: maxline,
                       style: const TextStyle(fontSize: 30),
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: "Please enter your text",
-                        hintStyle: const TextStyle(fontSize: 22),
-                        enabledBorder: const UnderlineInputBorder(
+                        hintStyle: TextStyle(fontSize: 22),
+                        enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.white)),
-                        focusedBorder: const UnderlineInputBorder(
+                        focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey)),
-                        suffixIcon: IconButton(
-                            onPressed: (() async {
-                              String mMes = morseTextController.text;
-                              String a =
-                                  mMes.replaceAll(RegExp(r'\s{3,}'), ';');
-                              // print(a);
-                              String b = a.replaceAll(RegExp(r'\s'), '/');
-                              // print(b);
-                              decode = await viewmodel.getDecodeMes(mMes, b);
-
-                              if (DecodeViewmodel.decodeError) {
-                                AlertDialog alert = AlertDialog(
-                                  title: const Text("Error!"),
-                                  content: const Text(
-                                      "Something error with text, please try again."),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text("Okay")),
-                                  ],
-                                );
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext cotext) {
-                                      return alert;
-                                    });
-                              }
-                              setState(() {});
-                            }),
-                            icon: const Icon(
-                              Icons.done,
-                              color: Colors.grey,
-                              size: 30,
-                            )),
                       ),
                     )),
                   ),
@@ -273,11 +237,33 @@ class _DecodePageState extends State<DecodePage> {
             ],
             ElevatedButton.icon(
               onPressed: () async {
-                final result = await FilePicker.platform.pickFiles(
-                  allowMultiple: false,
-                  allowedExtensions: ['wav'],
-                  type: FileType.custom,
-                );
+                var result;
+                try {
+                  result = await FilePicker.platform.pickFiles(
+                    allowMultiple: false,
+                    allowedExtensions: ['wav'],
+                    type: FileType.custom,
+                  );
+                } catch (e) {
+                  AlertDialog alert = AlertDialog(
+                    title: const Text("Error!"),
+                    content: const Text(
+                        "Please allow the permission to select files."),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Okay")),
+                    ],
+                  );
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext cotext) {
+                        return alert;
+                      });
+                }
+
                 if (result == null) {
                   setState(() {
                     haveAudio = false;
@@ -327,6 +313,51 @@ class _DecodePageState extends State<DecodePage> {
                   fixedSize: const Size(250, 50),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(35.0))),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: ElevatedButton(
+                  onPressed: (() async {
+                    String mMes = morseTextController.text;
+                    String a = mMes.replaceAll(RegExp(r'\s{3,}'), ';');
+                    // print(a);
+                    String b = a.replaceAll(RegExp(r'\s'), '/');
+                    // print(b);
+                    decode = await viewmodel.getDecodeMes(mMes, b);
+
+                    if (DecodeViewmodel.decodeError) {
+                      AlertDialog alert = AlertDialog(
+                        title: const Text("Error!"),
+                        content: const Text(
+                            "Something error with text, please try again."),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Okay")),
+                        ],
+                      );
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext cotext) {
+                            return alert;
+                          });
+                    }
+                    setState(() {});
+                  }),
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.amber,
+                      fixedSize: const Size(250, 50),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35.0))),
+                  child: const Text(
+                    "DECODE",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  )),
             ),
           ],
         ),
