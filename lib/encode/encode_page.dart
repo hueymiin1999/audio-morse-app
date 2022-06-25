@@ -76,6 +76,7 @@ class _EncodePageState extends State<EncodePage> {
       ),
       backgroundColor: const Color.fromARGB(255, 246, 255, 187),
       body: SingleChildScrollView(
+        reverse: true,
         child: Column(
           children: [
             // Text Box
@@ -235,11 +236,12 @@ class _EncodePageState extends State<EncodePage> {
                   ),
                   Container(
                       margin: const EdgeInsets.all(5.0),
-                      height: maxline * 30,
+                      height: (encode != null) ? null : maxline * 30,
                       child: (encode != null)
                           ? Text(
                               encode!.changedMessage.toString(),
                               style: const TextStyle(fontSize: 30),
+                              //maxLines: maxline,
                             )
                           : const Text(
                               "Morse code here",
